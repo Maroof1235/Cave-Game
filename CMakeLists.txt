@@ -12,21 +12,24 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # vcpkg-provided config
 find_package(raylib CONFIG REQUIRED)
 
+
 # Be robust across ports: prefer namespaced if present, else plain.
 if (TARGET raylib::raylib)
-  set(RAYLIB_TARGET raylib::raylib)
+    set(RAYLIB_TARGET raylib::raylib)
 elseif (TARGET raylib)
-  set(RAYLIB_TARGET raylib)
+    set(RAYLIB_TARGET raylib)
 else()
-  message(FATAL_ERROR
-    "raylib was found but exported no known CMake target. "
-    "Known targets: 'raylib::raylib' or 'raylib'. "
-    "CMAKE_PREFIX_PATH='${CMAKE_PREFIX_PATH}'")
+    message(FATAL_ERROR
+      "raylib was found but exported no known CMake target. "
+      "Known targets: 'raylib::raylib' or 'raylib'. "
+      "CMAKE_PREFIX_PATH='${CMAKE_PREFIX_PATH}'")
 endif()
 
 add_executable(cave-game
     tech-demo/src/main.c
 )
+
+target_include_directories(cave-game PRIVATE "$<TARGET_PROPERTY:${RAYLIB_TARGET},INTERFACE_INCLUDE_DIRECTORIES>")
 
 target_link_libraries(cave-game PRIVATE ${RAYLIB_TARGET})
 

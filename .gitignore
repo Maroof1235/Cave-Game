@@ -52,3 +52,6 @@
 /.vs/CMake Overview
 /.vs/
 
+# ignore local config overrides
+CMakeUserPresets.json
+
