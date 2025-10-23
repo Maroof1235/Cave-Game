@@ -43,10 +43,12 @@
 /build/
 /out/
 /data/
+/temp/
 /.vscode/
 *.user
 /.vs/VSWorkSpaceState.json
 /.vs/ProjectSettings.json
 /.vs/slnx.sqlite
 /.vs/CMake Overview
+/.vs/
 
