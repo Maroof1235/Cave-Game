@@ -11,30 +11,40 @@
       "hidden": true,
       "generator": "Ninja",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+
+        "CMAKE_TOOLCHAIN_FILE": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
+
+        "CMAKE_C_COMPILER": "C:/msys64/mingw64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "C:/msys64/mingw64/bin/g++.exe",
+        
+        "CMAKE_MAKE_PROGRAM": "C:/msys64/mingw64/bin/ninja.exe"
       }
     },
     {
       "name": "ninja-debug",
       "inherits": "base",
-      "displayName": "Ninja - Debug",
+      "displayName": "Ninja - Debug (MinGW)",
       "binaryDir": "${sourceDir}/build/ninja-debug",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic"
       }
     },
     {
       "name": "ninja-release",
       "inherits": "base",
-      "displayName": "Ninja - Release",
+      "displayName": "Ninja - Release (MinGW)",
       "binaryDir": "${sourceDir}/build/ninja-release",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic"
       }
     },
     {
       "name": "vs2022-x64",
-      "displayName": "Visual Studio 17 2022 - x64",
+      "displayName": "Visual Studio 17 2022 - x64 (MSVC)",
       "generator": "Visual Studio 17 2022",
       "binaryDir": "${sourceDir}/build/vs2022-x64",
       "architecture": {
@@ -42,7 +52,9 @@
         "strategy": "external"
       },
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
+
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
       }
     }
   ],
