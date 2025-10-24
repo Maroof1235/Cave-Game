@@ -29,8 +29,6 @@ add_executable(cave-game
     tech-demo/src/main.c
 )
 
-target_include_directories(cave-game PRIVATE "$<TARGET_PROPERTY:${RAYLIB_TARGET},INTERFACE_INCLUDE_DIRECTORIES>")
-
 target_link_libraries(cave-game PRIVATE ${RAYLIB_TARGET})
 
 # On MSVC, set working directory for debugging to the binary dir
