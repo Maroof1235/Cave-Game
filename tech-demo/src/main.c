@@ -8,6 +8,7 @@ typedef struct {
     float jump_start;
     float velocity;
     float downward_force;
+    Texture2D player_tex;
 } Player;
 
 void jump(Player* p);
@@ -21,8 +22,11 @@ int main(void)
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Cave Game");
 
     Player p;
-    p.player_size.x = (float)60;
-    p.player_size.y = (float)60;
+
+    p.player_tex = LoadTexture("../../tech-demo/assets/tilesets/characterleft.png");
+
+    p.player_size.x = (float)64;
+    p.player_size.y = (float)64;
 
     p.player_pos.x = (float)SCREEN_WIDTH/2;
     p.player_pos.y = SCREEN_HEIGHT - p.player_size.y;
@@ -31,7 +35,6 @@ int main(void)
 
     SetTargetFPS(60);
 
-
     // main game loop
     while(!WindowShouldClose())
     {
@@ -39,9 +42,11 @@ int main(void)
 
         if (IsKeyDown(KEY_A)) {
             p.player_pos.x -= 9.0f;
+            p.player_tex = LoadTexture("../../tech-demo/assets/tilesets/characterleft.png");
         }
         if (IsKeyDown(KEY_D)) {
             p.player_pos.x += 9.0f;
+            p.player_tex = LoadTexture("../../tech-demo/assets/tilesets/characterright.png");
         }
 
         jump(&p);
@@ -54,11 +59,16 @@ int main(void)
         DrawText("Press A and D to move left and right", 10, 10, 50, RED);
         DrawText("Press space bar to jump", 10, 60, 50, RED);
 
-        DrawRectangleV(p.player_pos, p.player_size, p.player_colour);
+        DrawTextureEx(p.player_tex, p.player_pos, 0.0f, 2.0f, WHITE);
+
+        // player with no texture
+        //DrawRectangleV(p.player_pos, p.player_size, p.player_colour);
 
         EndDrawing();
     }
 
+    // cleanup resources
+    UnloadTexture(p.player_tex);
     CloseWindow();
 
     return 0;
@@ -77,6 +87,10 @@ void jump(Player* p)
 
     int difference = 0;
 
+    // TODO:
+        // prevent start and stopping of horizontal movement in the air
+    //////////////////////////////////////////////////////////////////////
+    
     if (IsKeyPressed(KEY_SPACE)) {
         // ground check
         if (p->player_pos.y >= SCREEN_HEIGHT - p->player_size.y) {
