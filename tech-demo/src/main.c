@@ -5,16 +5,21 @@ typedef struct {
     Vector2 player_pos;
     Color player_colour;
     bool jump;
+    bool is_grounded;
     float jump_start;
     float velocity;
     float downward_force;
+    float horizontal_speed;
+    float current_speed;
     Texture2D player_tex_left;
     Texture2D player_tex_right;
     Texture2D player_current_tex;
     Music music;
+    float velocity_x;
 } Player;
 
 void jump(Player* p);
+bool ground_check(Player *p);
 
 const int SCREEN_WIDTH = 1600;
 const int SCREEN_HEIGHT = 900;
@@ -27,6 +32,8 @@ int main(void)
     InitAudioDevice();
 
     Player p;
+
+    p.horizontal_speed = 9.0f;
 
     p.player_tex_right = LoadTexture("../../tech-demo/assets/tilesets/characterright.png");
     p.player_tex_left = LoadTexture("../../tech-demo/assets/tilesets/characterleft.png");
@@ -43,7 +50,7 @@ int main(void)
     p.music = LoadMusicStream("../../tech-demo/assets/sounds/bfxr_sounds/Jump.wav");
     p.music.looping = false;
     float pitch = 1.0f;
-    float volume = 0.4f;
+    float volume = 0.1f;
 
     SetTargetFPS(60);
 
@@ -53,14 +60,23 @@ int main(void)
         UpdateMusicStream(p.music);
         // update things here
 
-        if (IsKeyDown(KEY_A)) {
-            p.player_pos.x -= 9.0f;
-            p.player_current_tex = p.player_tex_left;
+        ground_check(&p);
+
+        if(p.is_grounded) {
+            if(IsKeyDown(KEY_A)) {
+                p.velocity_x = -9.0f;
+                p.player_current_tex = p.player_tex_left;
+            }
+            else if(IsKeyDown(KEY_D)) {
+                p.velocity_x = 9.0f;
+                p.player_current_tex = p.player_tex_right;
+            }
+            else {
+                p.velocity_x = 0;
+            }
         }
-        if (IsKeyDown(KEY_D)) {
-            p.player_pos.x += 9.0f;
-            p.player_current_tex = p.player_tex_right;
-        }
+
+        p.player_pos.x += p.velocity_x;
 
         jump(&p);
 
@@ -106,20 +122,12 @@ void jump(Player* p)
 
     int difference = 0;
 
-    // TODO:
-        // prevent start and stopping of horizontal movement in the air
-    //////////////////////////////////////////////////////////////////////
-
     if (IsKeyPressed(KEY_SPACE)) {
-        // ground check
-        if (p->player_pos.y >= SCREEN_HEIGHT - p->player_size.y) {
-            p->velocity = 175.0f;
-            p->downward_force = 8.0f;
-            p->jump_start = p->player_pos.y;
-            p->jump = true;
-            PlayMusicStream(p->music);
-
-        }
+        ground_check(p);
+        p->velocity = 175.0f;
+        p->downward_force = 8.0f;
+        p->jump_start = p->player_pos.y;
+        PlayMusicStream(p->music);
     }
 
     if (IsKeyDown(KEY_SPACE)) {
@@ -140,13 +148,22 @@ void jump(Player* p)
         }
 
         // ground check
-        if (p->player_pos.y >= SCREEN_HEIGHT - p->player_size.y) {
-            p->jump = false;
-            p->player_pos.y = SCREEN_HEIGHT - p->player_size.y;
-        }
-
-        
+        ground_check(p);
 
     }
 
+}
+
+bool ground_check(Player *p)
+{
+    if (p->player_pos.y >= SCREEN_HEIGHT - p->player_size.y) {
+        p->jump = false;
+        p->player_pos.y = SCREEN_HEIGHT - p->player_size.y;
+        p->is_grounded = true;
+    }
+    else {
+        p->is_grounded = false;
+    }
+
+    return p->is_grounded;
 }
