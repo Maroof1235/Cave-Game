@@ -27,6 +27,7 @@ endif()
 
 add_executable(cave-game
     tech-demo/src/main.c
+    tech-demo/src/load_media.c
 )
 
 target_link_libraries(cave-game PRIVATE ${RAYLIB_TARGET})
