@@ -24,7 +24,7 @@ const int SCREEN_HEIGHT = 900;
 int main(void)
 {
     // initialise window and device contexts
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Cave Game");s
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Cave Game");
 
     InitAudioDevice();
 
@@ -122,11 +122,8 @@ void jump(Player* p, Assets *a)
     // character lands when downward velocity = initial upward velocity
 
     int difference = 0;
-
-
-    // TODO
-    // CAN DOUBLE JUMP NOW. FIX THIS NOW
-    if (IsKeyPressed(KEY_SPACE)) {
+    
+    if (IsKeyPressed(KEY_SPACE) && p->is_grounded) {
         ground_check(p);
         p->velocity = 175.0f;
         p->downward_force = 8.0f;
@@ -138,7 +135,7 @@ void jump(Player* p, Assets *a)
          p->jump = true;
     }
 
-    if(p->jump == true) {
+    if((p->jump == true)) {
         
         p->velocity -= p->downward_force;
 
