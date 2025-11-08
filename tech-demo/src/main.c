@@ -24,7 +24,7 @@ const int SCREEN_HEIGHT = 900;
 int main(void)
 {
     // initialise window and device contexts
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Cave Game");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Cave Game");s
 
     InitAudioDevice();
 
@@ -33,7 +33,17 @@ int main(void)
 
     p.horizontal_speed = 9.0f;
 
-    load_media(&assets);
+    // loading textures
+    // player sprite
+    load_textures(&assets, &assets.player_current_tex, "../../tech-demo/assets/tilesets/characterright.png");
+    load_textures(&assets, &assets.player_tex_right, "../../tech-demo/assets/tilesets/characterright.png");
+    load_textures(&assets, &assets.player_tex_left, "../../tech-demo/assets/tilesets/characterleft.png");
+
+    // load audio files
+    // jump sfx
+    load_audio(&assets, &assets.jump_sfx, "../../tech-demo/assets/sounds/bfxr_sounds/Jump.wav");
+    assets.jump_sfx.looping = false;
+    assets.jump_vol = 0.1f;
 
     p.player_size.x = (float)64;
     p.player_size.y = (float)64;
@@ -42,9 +52,6 @@ int main(void)
     p.player_pos.y = SCREEN_HEIGHT - p.player_size.y;
 
     p.player_colour = BLUE;
-
-    float pitch = 1.0f;
-    // float volume = 0.1f;
 
     SetTargetFPS(60);
 
@@ -116,6 +123,9 @@ void jump(Player* p, Assets *a)
 
     int difference = 0;
 
+
+    // TODO
+    // CAN DOUBLE JUMP NOW. FIX THIS NOW
     if (IsKeyPressed(KEY_SPACE)) {
         ground_check(p);
         p->velocity = 175.0f;
