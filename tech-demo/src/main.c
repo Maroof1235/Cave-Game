@@ -17,6 +17,8 @@ typedef struct {
 
 void jump(Player* p, Assets *a);
 bool ground_check(Player *p);
+void cleanup(Assets *assets);
+void player_init(Player *p);
 
 const int SCREEN_WIDTH = 1600;
 const int SCREEN_HEIGHT = 900;
@@ -31,8 +33,6 @@ int main(void)
     Player p;
     Assets assets = {0};
 
-    p.horizontal_speed = 9.0f;
-
     // loading textures
     // player sprite
     load_textures(&assets, &assets.player_current_tex, "../../tech-demo/assets/tilesets/characterright.png");
@@ -45,13 +45,7 @@ int main(void)
     assets.jump_sfx.looping = false;
     assets.jump_vol = 0.1f;
 
-    p.player_size.x = (float)64;
-    p.player_size.y = (float)64;
-
-    p.player_pos.x = (float)SCREEN_WIDTH/2;
-    p.player_pos.y = SCREEN_HEIGHT - p.player_size.y;
-
-    p.player_colour = BLUE;
+    player_init(&p);
 
     SetTargetFPS(60);
 
@@ -102,10 +96,8 @@ int main(void)
     }
 
     // cleanup resources
-    UnloadTexture(assets.player_tex_right);
-    UnloadTexture(assets.player_tex_left);
-    CloseAudioDevice();
-    CloseWindow();
+    cleanup(&assets);
+
 
     return 0;
 }
@@ -167,4 +159,24 @@ bool ground_check(Player *p)
     }
 
     return p->is_grounded;
+}
+
+void player_init(Player *p)
+{
+    p->horizontal_speed = 9.0f;
+    p->player_size.x = (float)64;
+    p->player_size.y = (float)64;
+
+    p->player_pos.x = (float)SCREEN_WIDTH/2;
+    p->player_pos.y = SCREEN_HEIGHT - p->player_size.y;
+
+    p->player_colour = BLUE;
+}
+
+void cleanup(Assets *assets)
+{
+    UnloadTexture(assets->player_tex_right);
+    UnloadTexture(assets->player_tex_left);
+    CloseAudioDevice();
+    CloseWindow();
 }
