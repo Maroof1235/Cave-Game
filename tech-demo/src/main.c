@@ -19,6 +19,7 @@ void jump(Player* p, Assets *a);
 bool ground_check(Player *p);
 void cleanup(Assets *assets);
 void player_init(Player *p);
+void player_movement(Player *p, Assets *assets);
 
 const int SCREEN_WIDTH = 1600;
 const int SCREEN_HEIGHT = 900;
@@ -52,29 +53,9 @@ int main(void)
     // main game loop
     while(!WindowShouldClose())
     {
-        UpdateMusicStream(assets.jump_sfx);
         // update things here
-
-        ground_check(&p);
-
-        if(p.is_grounded) {
-            if(IsKeyDown(KEY_A)) {
-                p.velocity_x = -9.0f;
-                
-                assets.player_current_tex = assets.player_tex_left;
-            }
-            else if(IsKeyDown(KEY_D)) {
-                p.velocity_x = 9.0f;
-                assets.player_current_tex = assets.player_tex_right;
-            }
-            else {
-                p.velocity_x = 0;
-            }
-        }
-
-        p.player_pos.x += p.velocity_x;
-
-        jump(&p, &assets);
+        UpdateMusicStream(assets.jump_sfx);
+        player_movement(&p, &assets);
 
         // draw
         BeginDrawing();
@@ -91,7 +72,6 @@ int main(void)
 
         SetMusicVolume(assets.jump_sfx, assets.jump_vol);
         
-
         EndDrawing();
     }
 
@@ -102,6 +82,17 @@ int main(void)
     return 0;
 }
 
+void player_init(Player *p)
+{
+    p->horizontal_speed = 9.0f;
+    p->player_size.x = (float)64;
+    p->player_size.y = (float)64;
+
+    p->player_pos.x = (float)SCREEN_WIDTH/2;
+    p->player_pos.y = SCREEN_HEIGHT - p->player_size.y;
+
+    p->player_colour = BLUE;
+}
 
 void jump(Player* p, Assets *a)
 {
@@ -161,17 +152,32 @@ bool ground_check(Player *p)
     return p->is_grounded;
 }
 
-void player_init(Player *p)
-{
-    p->horizontal_speed = 9.0f;
-    p->player_size.x = (float)64;
-    p->player_size.y = (float)64;
+void player_movement(Player *p, Assets *assets)
+{  
+    ground_check(p);
 
-    p->player_pos.x = (float)SCREEN_WIDTH/2;
-    p->player_pos.y = SCREEN_HEIGHT - p->player_size.y;
+    if(p->is_grounded) {
+        if(IsKeyDown(KEY_A)) {
+            p->velocity_x = -9.0f;
+            
+            assets->player_current_tex = assets->player_tex_left;
+        }
+        else if(IsKeyDown(KEY_D)) {
+            p->velocity_x = 9.0f;
+            assets->player_current_tex = assets->player_tex_right;
+        }
+        else {
+            p->velocity_x = 0;
+        }
+    }
 
-    p->player_colour = BLUE;
+    p->player_pos.x += p->velocity_x;
+
+    jump(p, assets);
 }
+
+
+
 
 void cleanup(Assets *assets)
 {
