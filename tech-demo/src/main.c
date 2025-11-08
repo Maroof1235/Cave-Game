@@ -10,8 +10,6 @@ typedef struct {
     float jump_start;
     float velocity;
     float downward_force;
-    float horizontal_speed;
-    float current_speed;
     float velocity_x;
 } Player;
 
@@ -20,6 +18,8 @@ bool ground_check(Player *p);
 void cleanup(Assets *assets);
 void player_init(Player *p);
 void player_movement(Player *p, Assets *assets);
+
+#define PLAYER_SPEED 9.0f
 
 const int SCREEN_WIDTH = 1600;
 const int SCREEN_HEIGHT = 900;
@@ -84,7 +84,6 @@ int main(void)
 
 void player_init(Player *p)
 {
-    p->horizontal_speed = 9.0f;
     p->player_size.x = (float)64;
     p->player_size.y = (float)64;
 
@@ -158,12 +157,12 @@ void player_movement(Player *p, Assets *assets)
 
     if(p->is_grounded) {
         if(IsKeyDown(KEY_A)) {
-            p->velocity_x = -9.0f;
+            p->velocity_x = -PLAYER_SPEED;
             
             assets->player_current_tex = assets->player_tex_left;
         }
         else if(IsKeyDown(KEY_D)) {
-            p->velocity_x = 9.0f;
+            p->velocity_x = PLAYER_SPEED;
             assets->player_current_tex = assets->player_tex_right;
         }
         else {
