@@ -9,4 +9,5 @@ typedef struct {
 } Assets;
 
 
-void load_media(Assets *a);
+void load_textures(Assets *a, Texture2D *sprite, const char* filepath);
+void load_audio(Assets *a, Music *audio, const char* filepath);

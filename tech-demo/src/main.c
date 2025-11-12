@@ -10,13 +10,16 @@ typedef struct {
     float jump_start;
     float velocity;
     float downward_force;
-    float horizontal_speed;
-    float current_speed;
     float velocity_x;
 } Player;
 
 void jump(Player* p, Assets *a);
 bool ground_check(Player *p);
+void cleanup(Assets *assets);
+void player_init(Player *p);
+void player_movement(Player *p, Assets *assets);
+
+#define PLAYER_SPEED 9.0f
 
 const int SCREEN_WIDTH = 1600;
 const int SCREEN_HEIGHT = 900;
@@ -31,49 +34,28 @@ int main(void)
     Player p;
     Assets assets = {0};
 
-    p.horizontal_speed = 9.0f;
+    // loading textures
+    // player sprite
+    load_textures(&assets, &assets.player_current_tex, "../../tech-demo/assets/tilesets/characterright.png");
+    load_textures(&assets, &assets.player_tex_right, "../../tech-demo/assets/tilesets/characterright.png");
+    load_textures(&assets, &assets.player_tex_left, "../../tech-demo/assets/tilesets/characterleft.png");
 
-    load_media(&assets);
+    // load audio files
+    // jump sfx
+    load_audio(&assets, &assets.jump_sfx, "../../tech-demo/assets/sounds/bfxr_sounds/Jump.wav");
+    assets.jump_sfx.looping = false;
+    assets.jump_vol = 0.1f;
 
-    p.player_size.x = (float)64;
-    p.player_size.y = (float)64;
-
-    p.player_pos.x = (float)SCREEN_WIDTH/2;
-    p.player_pos.y = SCREEN_HEIGHT - p.player_size.y;
-
-    p.player_colour = BLUE;
-
-    float pitch = 1.0f;
-    // float volume = 0.1f;
+    player_init(&p);
 
     SetTargetFPS(60);
 
     // main game loop
     while(!WindowShouldClose())
     {
-        UpdateMusicStream(assets.jump_sfx);
         // update things here
-
-        ground_check(&p);
-
-        if(p.is_grounded) {
-            if(IsKeyDown(KEY_A)) {
-                p.velocity_x = -9.0f;
-                
-                assets.player_current_tex = assets.player_tex_left;
-            }
-            else if(IsKeyDown(KEY_D)) {
-                p.velocity_x = 9.0f;
-                assets.player_current_tex = assets.player_tex_right;
-            }
-            else {
-                p.velocity_x = 0;
-            }
-        }
-
-        p.player_pos.x += p.velocity_x;
-
-        jump(&p, &assets);
+        UpdateMusicStream(assets.jump_sfx);
+        player_movement(&p, &assets);
 
         // draw
         BeginDrawing();
@@ -90,19 +72,26 @@ int main(void)
 
         SetMusicVolume(assets.jump_sfx, assets.jump_vol);
         
-
         EndDrawing();
     }
 
     // cleanup resources
-    UnloadTexture(assets.player_tex_right);
-    UnloadTexture(assets.player_tex_left);
-    CloseAudioDevice();
-    CloseWindow();
+    cleanup(&assets);
+
 
     return 0;
 }
 
+void player_init(Player *p)
+{
+    p->player_size.x = (float)64;
+    p->player_size.y = (float)64;
+
+    p->player_pos.x = (float)SCREEN_WIDTH/2;
+    p->player_pos.y = SCREEN_HEIGHT - p->player_size.y;
+
+    p->player_colour = BLUE;
+}
 
 void jump(Player* p, Assets *a)
 {
@@ -115,8 +104,8 @@ void jump(Player* p, Assets *a)
     // character lands when downward velocity = initial upward velocity
 
     int difference = 0;
-
-    if (IsKeyPressed(KEY_SPACE)) {
+    
+    if (IsKeyPressed(KEY_SPACE) && p->is_grounded) {
         ground_check(p);
         p->velocity = 175.0f;
         p->downward_force = 8.0f;
@@ -128,7 +117,7 @@ void jump(Player* p, Assets *a)
          p->jump = true;
     }
 
-    if(p->jump == true) {
+    if((p->jump == true)) {
         
         p->velocity -= p->downward_force;
 
@@ -160,4 +149,39 @@ bool ground_check(Player *p)
     }
 
     return p->is_grounded;
+}
+
+void player_movement(Player *p, Assets *assets)
+{  
+    ground_check(p);
+
+    if(p->is_grounded) {
+        if(IsKeyDown(KEY_A)) {
+            p->velocity_x = -PLAYER_SPEED;
+            
+            assets->player_current_tex = assets->player_tex_left;
+        }
+        else if(IsKeyDown(KEY_D)) {
+            p->velocity_x = PLAYER_SPEED;
+            assets->player_current_tex = assets->player_tex_right;
+        }
+        else {
+            p->velocity_x = 0;
+        }
+    }
+
+    p->player_pos.x += p->velocity_x;
+
+    jump(p, assets);
+}
+
+
+
+
+void cleanup(Assets *assets)
+{
+    UnloadTexture(assets->player_tex_right);
+    UnloadTexture(assets->player_tex_left);
+    CloseAudioDevice();
+    CloseWindow();
 }
