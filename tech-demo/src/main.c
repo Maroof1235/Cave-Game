@@ -1,5 +1,9 @@
+#include <stdio.h>
+
 #include "raylib.h"
 #include "load_media.h"
+
+
 
 typedef struct {
     Vector2 player_size;
@@ -24,6 +28,7 @@ void player_movement(Player *p, Assets *assets);
 const int SCREEN_WIDTH = 1600;
 const int SCREEN_HEIGHT = 900;
 
+
 int main(void)
 {
     // initialise window and device contexts
@@ -40,11 +45,24 @@ int main(void)
     load_textures(&assets, &assets.player_tex_right, "../../tech-demo/assets/tilesets/characterright.png");
     load_textures(&assets, &assets.player_tex_left, "../../tech-demo/assets/tilesets/characterleft.png");
 
+    printf("ADDRESS OF CURRENT TEX: %p\n", &assets.player_current_tex);
+    printf("ADDRESS OF RIGHT TEX: %p\n", &assets.player_tex_right);
+    printf("ADDRESS OF LEFT TEX: %p\n", &assets.player_tex_left);
+
     // load audio files
+    // background music
+    load_audio(&assets, &assets.bgm, "../../tech-demo/assets/sounds/bgm/test.wav");
+    assets.bgm.looping = true;
+    assets.bgm_vol = 0.13f;
+    PlayMusicStream(assets.bgm);
+
     // jump sfx
     load_audio(&assets, &assets.jump_sfx, "../../tech-demo/assets/sounds/bfxr_sounds/Jump.wav");
     assets.jump_sfx.looping = false;
     assets.jump_vol = 0.1f;
+
+    
+
 
     player_init(&p);
 
@@ -54,11 +72,16 @@ int main(void)
     while(!WindowShouldClose())
     {
         // update things here
+       
+        UpdateMusicStream(assets.bgm);
         UpdateMusicStream(assets.jump_sfx);
         player_movement(&p, &assets);
 
+
         // draw
         BeginDrawing();
+
+        
   
         ClearBackground(DARKGRAY);
          
@@ -70,6 +93,7 @@ int main(void)
         // player with no texture
         //DrawRectangleV(p.player_pos, p.player_size, p.player_colour);
 
+        SetMusicVolume(assets.bgm, assets.bgm_vol);
         SetMusicVolume(assets.jump_sfx, assets.jump_vol);
         
         EndDrawing();
@@ -158,12 +182,17 @@ void player_movement(Player *p, Assets *assets)
     if(p->is_grounded) {
         if(IsKeyDown(KEY_A)) {
             p->velocity_x = -PLAYER_SPEED;
-            
+         //   printf("ADDRESS OF LEFT TEX: %p\n", &assets->player_tex_left);
             assets->player_current_tex = assets->player_tex_left;
+            
+          //  printf("ADDRESS OF CURRENT TEX: %p\n", &assets->player_current_tex);
         }
         else if(IsKeyDown(KEY_D)) {
             p->velocity_x = PLAYER_SPEED;
+           // printf("ADDRESS OF RIGHT TEX: %p\n", &assets->player_tex_right);
             assets->player_current_tex = assets->player_tex_right;
+            
+          //  printf("ADDRESS OF CURRENT TEX: %p\n", &assets->player_current_tex);
         }
         else {
             p->velocity_x = 0;
@@ -174,6 +203,10 @@ void player_movement(Player *p, Assets *assets)
 
     jump(p, assets);
 }
+
+        
+        
+
 
 
 
