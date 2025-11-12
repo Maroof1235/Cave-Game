@@ -40,6 +40,8 @@ int main(void)
     Assets assets = {0};
 
     // loading textures
+    // background
+    load_textures(&assets, &assets.background, "../../tech-demo/assets/tilesets/Background256RGB-1024x512.png");
     // player sprite
     load_textures(&assets, &assets.player_current_tex, "../../tech-demo/assets/tilesets/characterright.png");
     load_textures(&assets, &assets.player_tex_right, "../../tech-demo/assets/tilesets/characterright.png");
@@ -84,6 +86,15 @@ int main(void)
         
   
         ClearBackground(DARKGRAY);
+
+        // stretch texture to fill window
+        DrawTexturePro(assets.background, 
+            (Rectangle){0, 0, assets.background.width, assets.background.height},
+            (Rectangle){0, 0, SCREEN_WIDTH, SCREEN_HEIGHT},
+            (Vector2){0, 0},
+            0.0f,
+            WHITE
+        );
          
         DrawText("Press A and D to move left and right", 10, 10, 50, RED);
         DrawText("Press space bar to jump", 10, 60, 50, RED);
@@ -213,6 +224,7 @@ void player_movement(Player *p, Assets *assets)
 
 void cleanup(Assets *assets)
 {
+    UnloadTexture(assets->background);
     UnloadTexture(assets->player_tex_right);
     UnloadTexture(assets->player_tex_left);
     CloseAudioDevice();
