@@ -23,7 +23,7 @@ void cleanup(Assets *assets);
 void player_init(Player *p);
 void player_movement(Player *p, Assets *assets);
 
-#define PLAYER_SPEED 9.0f
+#define PLAYER_SPEED 6.0f
 
 const int SCREEN_WIDTH = 1600;
 const int SCREEN_HEIGHT = 900;
@@ -53,7 +53,7 @@ int main(void)
 
     // load audio files
     // background music
-    load_audio(&assets, &assets.bgm, "../../tech-demo/assets/sounds/bgm/test.wav");
+    load_audio(&assets, &assets.bgm, "../../tech-demo/assets/sounds/bgm/8-bit-dungeon-251388.wav");
     assets.bgm.looping = true;
     assets.bgm_vol = 0.13f;
     PlayMusicStream(assets.bgm);
