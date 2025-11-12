@@ -6,6 +6,8 @@ typedef struct {
     Texture2D player_current_tex;
     Music jump_sfx;
     float jump_vol;
+    Music bgm;
+    float bgm_vol;
 } Assets;
 
 
